@@ -50,3 +50,12 @@ Artifice.activate_with(rack_endpoint) do
   Excon.get("https://google.com")
 end
 ```
+
+Development
+-----------
+
+Run tests using:
+
+```
+rake test
+```
