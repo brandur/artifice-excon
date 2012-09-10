@@ -51,6 +51,30 @@ Artifice.activate_with(rack_endpoint) do
 end
 ```
 
+### Host-based Activation
+
+A feature present in artifice-excon that isn't in the original is host-based
+endpoint activation, so that a particular rack app can be activated for a
+particular host. This is useful in case you have an app that potentially needs
+to speak to multiple services with different APIs.
+
+``` ruby
+Artifice::Excon.activate_for('google.com', google_endpoint)
+
+# a catch-all is still allowed! but a registered host-specific endpoint will
+# always take preference
+Artifice::Excon.activate_with(rack_endpoint)
+```
+
+Once again, deactivate for a particular host or everything:
+
+``` ruby
+Artifice.deactivate_for('google.com')
+
+# deactivates all registered endpoints including host-specific and global
+Artifice.deactivate
+```
+
 Development
 -----------
 
