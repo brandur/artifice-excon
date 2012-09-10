@@ -2,12 +2,12 @@ artifice-excon
 ==============
 
 Artifice allows you to replace remote HTTP/HTTPS calls with a stub that routes
-all requests to a Rack application. This version integrates with the
+all requests to a Rack application. This version integrates with
 [Excon](https://github.com/geemus/excon) instead of the Net:HTTP subsystem that
 [Wycat's original gem](https://github.com/wycats/artifice) provides.
 
 Remote service stubs can be constructed using Sinatra, raw Rack, or even Rails,
-allowing you to leverage familiar and conveninent tools.
+allowing you to leverage familiar and convenient tools.
 
 Usage
 -----
@@ -27,13 +27,13 @@ require 'artifice/excon'
 Next, activate artifice-excon by passing in a Rack endpoint:
 
 ``` ruby
-Artifice::Excon.activate_with(rack_endpoint)</pre>
+Artifice::Excon.activate_with(rack_endpoint)
 
 # an extremely basic example
 app = proc do |env|
   [200, {}, "Hello, world!"]
 end
-Artifice::Excon.activate_with(app)</pre>
+Artifice::Excon.activate_with(app)
 ```
 
 And finally, deactivate it again:
