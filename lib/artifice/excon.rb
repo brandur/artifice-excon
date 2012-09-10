@@ -1,6 +1,9 @@
+require "excon"
+require "rack/test"
+
 module Artifice
   module Excon
-    EXCON_CONNETION = ::Excon::Connection
+    EXCON_CONNECTION = ::Excon::Connection
 
     # Activate an endpoint for a specific host. The host has both scheme and
     # port omitted.
