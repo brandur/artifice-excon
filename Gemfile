@@ -1,3 +1,5 @@
+source :rubygems
+
 gem "excon"
 gem "rack-test"
 
