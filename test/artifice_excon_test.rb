@@ -18,7 +18,7 @@ describe Artifice::Excon do
            "X-Test-Host"   => env["SERVER_NAME"],
            "X-Test-Port"   => env["SERVER_PORT"],
            "X-Test-Query"  => env["QUERY_STRING"]},
-      ["Hello world"]
+      ["Hello, world!"]
     ]
   end
 
