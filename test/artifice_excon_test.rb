@@ -22,6 +22,38 @@ describe Artifice::Excon do
     ]
   end
 
+  describe "for a particular host" do
+    after do
+      Artifice::Excon.deactivate
+      ::Excon::Connection.must_equal EXCON_CONNECTION
+    end
+
+    before do
+      Artifice::Excon.activate_for('google.com', FakeApp)
+    end
+
+    it "sends the request properly" do
+      @response = Excon.get('http://google.com/index')
+      @response.headers["X-Test-Method"].must_equal "GET"
+    end
+
+    it "can be deactivated" do
+      Artifice::Excon.deactivate_for('google.com')
+      ::Excon::Connection.must_equal EXCON_CONNECTION
+    end
+
+    it "stays active, even after other hosts are activated and deactivated" do
+      Artifice::Excon.activate_for(:default, FakeApp)
+      Artifice::Excon.deactivate_for(:default)
+      ::Excon::Connection.wont_equal EXCON_CONNECTION
+    end
+
+    it "still clears everything on global deactivate" do
+      Artifice::Excon.deactivate
+      ::Excon::Connection.must_equal EXCON_CONNECTION
+    end
+  end
+
   describe "before activating" do
     it "does not override Excon::HTTP" do
       ::Excon::Connection.must_equal EXCON_CONNECTION

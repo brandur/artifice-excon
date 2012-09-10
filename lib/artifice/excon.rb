@@ -2,21 +2,45 @@ module Artifice
   module Excon
     EXCON_CONNETION = ::Excon::Connection
 
-    def self.activate_with(endpoint)
-      Excon::Connection.endpoint = endpoint
-      replace_connection(Artifice::Excon::Connection)
+    # Activate an endpoint for a specific host. The host has both scheme and
+    # port omitted.
+    #
+    #     activate_for('google.com', rack_endpoint)
+    def self.activate_for(host, endpoint)
+      Excon::Connection.endpoints[host] = endpoint
+
+      # activate only after the first stub is added
+      replace_connection(Artifice::Excon::Connection) \
+        if Excon::Connection.endpoints.count == 1
 
       if block_given?
         begin
           yield
         ensure
-          deactivate
+          deactivate_for(host)
         end
       end
     end
 
-    # Deactivate the Artifice replacement.
+    # Deactivate an endpoint for a specific host.
+    def self.deactivate_for(host)
+      Excon::Connection.endpoints.delete(host)
+
+      # deactivate fully after the last stub is gone
+      replace_connection(EXCON_CONNECTION) \
+        if Excon::Connection.endpoints.count == 0
+    end
+
+    # Activate a default endpoint to which all requests will be routed (unless
+    # a more specific host endpoint is active).
+    def self.activate_with(endpoint, &block)
+      activate_for(:default, endpoint, &block)
+    end
+
+    # Deactivate all endpoints including the default and all host-specific
+    # endpoints as well.
     def self.deactivate
+      Excon::Connection.endpoints.clear
       replace_connection(EXCON_CONNECTION)
     end
 
@@ -42,11 +66,17 @@ module Artifice
 
     class Connection < ::Excon::Connection
       class << self
-        attr_accessor :endpoint
+        def endpoints
+          @endpoints ||= {}
+        end
       end
 
       def request_kernel(params)
-        rack_request = RackRequest.new(self.class.endpoint)
+        endpoint = self.class.endpoints[params[:host]] ||
+          self.class.endpoints[:default]
+        return super unless endpoint
+
+        rack_request = RackRequest.new(endpoint)
 
         params[:headers].each do |header, value|
           rack_request.header(header, value)
