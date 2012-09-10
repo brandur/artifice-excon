@@ -1,6 +1,6 @@
 Gem::Specification.new do |gem|
   gem.name        = "artifice-excon"
-  gem.version     = "0.1.0"
+  gem.version     = "0.1.1"
 
   gem.author      = "Brandur"
   gem.email       = "brandur@mutelight.org"
@@ -9,4 +9,6 @@ Gem::Specification.new do |gem|
   gem.summary     = "A version of Wycat's Artifice for use with Excon."
 
   gem.files       = %w{lib/artifice/excon.rb}
+
+  gem.add_dependency "rack-test"
 end
