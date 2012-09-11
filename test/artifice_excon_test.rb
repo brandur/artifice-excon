@@ -139,6 +139,12 @@ describe Artifice::Excon do
       @response.headers["X-Test-Method"].must_equal "GET"
     end
 
+    it "supports hosts with scheme as well" do
+      Artifice::Excon.activate_for('http://example.com', FakeApp)
+      @response = Excon.get('http://google.com/index')
+      @response.headers["X-Test-Method"].must_equal "GET"
+    end
+
     it "can be deactivated" do
       Artifice::Excon.deactivate_for('google.com')
       ::Excon::Connection.must_equal EXCON_CONNECTION

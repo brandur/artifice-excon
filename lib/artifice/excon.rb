@@ -10,7 +10,8 @@ module Artifice
     #
     #     activate_for('google.com', rack_endpoint)
     def self.activate_for(host, endpoint)
-      Excon::Connection.endpoints[host] = endpoint
+      # support both hosts of http://google.com or google.com
+      Excon::Connection.endpoints[URI.parse(host).host || host] = endpoint
 
       # activate only after the first stub is added
       replace_connection(Artifice::Excon::Connection) \
