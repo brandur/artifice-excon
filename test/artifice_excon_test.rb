@@ -10,7 +10,6 @@ describe Artifice::Excon do
   EXCON_CONNECTION = ::Excon::Connection
 
   FakeApp = proc do |env|
-    #require "debugger" ; debugger
     [200, {"Content-Type"  => "text/html",
            "X-Test-Method" => env["REQUEST_METHOD"],
            "X-Test-Input"  => env["rack.input"].read,
@@ -54,6 +53,12 @@ describe Artifice::Excon do
       it "sends the input properly" do
         @response.headers["X-Test-Input"].must_equal "foo=bar"
       end
+    end
+
+    it "functions with status expectations" do
+      lambda {
+        @response = Excon.get('http://google.com/index', :expects => 404)
+      }.must_raise Excon::Errors::OK
     end
 
     describe "HTTP GET request" do

@@ -93,8 +93,14 @@ module Artifice
         response = rack_request.request(request,
           { :method => params[:method], :input => params[:body] })
 
-        ::Excon::Response.new(:body => response.body,
+        response = ::Excon::Response.new(:body => response.body,
           :headers => response.headers, :status => response.status)
+
+        if params.has_key?(:expects) && ![*params[:expects]].include?(response.status)
+          raise(::Excon::Errors.status_error(params, response))
+        end
+
+        response
       end
 
     private
